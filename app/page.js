@@ -629,7 +629,10 @@ const [fromDate, setFromDate] = useState('');
 const [toDate, setToDate] = useState('');
   const filteredRows = rows.filter(x => {
     const cottageMatch =
-      cottageFilter === 'all' || x.cottage_id === cottageFilter;
+  cottageFilter === 'all' ||
+  (cottageFilter === 'combined' &&
+    ['standard', 'luxury', 'superior', 'premier'].includes(x.cottage_id)) ||
+  x.cottage_id === cottageFilter;
 
     const categoryMatch =
       categoryFilter === 'all' || x.category === categoryFilter;
@@ -660,6 +663,7 @@ const filteredTotal = filteredRows.reduce(
     onChange={e => setCottageFilter(e.target.value)}
   >
     <option value="all">All Cottages</option>
+    <option value="combined">All Cottages Combined</option>
     <option value="standard">Standard Cottage</option>
     <option value="luxury">Luxury Cottage</option>
     <option value="superior">Superior Cottage</option>
