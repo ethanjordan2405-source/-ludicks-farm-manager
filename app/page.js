@@ -1407,7 +1407,8 @@ function ExpenseForm({ item, close, reload, setErr }) {
               }
             >
               <option value="">General / All</option>
-              {cottages.map(c => (
+<option value="combined">All Cottages Combined</option>
+{cottages.map(c => (
                 <option value={c[0]} key={c[0]}>
                   {c[1]}
                 </option>
