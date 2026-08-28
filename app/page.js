@@ -244,7 +244,7 @@ export default function App() {
             </div>
 
             <BookingTable
-              rows={[...data.bookings].sort((a, b) => new Date(b.start_date) - new Date(a.start_date))}
+              rows={[...data.bookings].sort((a, b) => new Date(b.check_in) - new Date(a.check_in))}
               paid={paid}
               admin={admin}
               edit={x => setModal({ type: 'booking', x })}
@@ -269,7 +269,7 @@ export default function App() {
             </div>
 
             <BookingTable
-              rows={[...data.bookings].sort((a, b) => new Date(b.start_date) - new Date(a.start_date))}
+              rows={[...data.bookings].sort((a, b) => new Date(b.check_in) - new Date(a.check_in))}
               paid={paid}
               admin={admin}
               edit={x => setModal({ type: 'booking', x })}
