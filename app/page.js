@@ -821,7 +821,10 @@ function FinancialSummary({ bookings, restaurant, expenses }) {
     e =>
       (
         selectedCottageIds.includes(e.cottage_id) ||
-        (reportFor === 'all' && e.cottage_id === 'combined')
+        (
+          (reportFor === 'all' || reportFor === 'combined') &&
+          !e.cottage_id
+        )
       ) &&
       inRange(e.expense_date)
   )
@@ -1410,7 +1413,7 @@ function ExpenseForm({ item, close, reload, setErr }) {
               }
             >
               <option value="">General / All</option>
-<option value="combined">All Cottages Combined</option>
+
 {cottages.map(c => (
                 <option value={c[0]} key={c[0]}>
                   {c[1]}
