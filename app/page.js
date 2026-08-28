@@ -625,17 +625,25 @@ function Restaurant({ rows, admin, add, edit, remove }) {
 function Expenses({ rows, admin, add, edit, remove }) {
   const [cottageFilter, setCottageFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
-
+const [fromDate, setFromDate] = useState('');
+const [toDate, setToDate] = useState('');
   const filteredRows = rows.filter(x => {
     const cottageMatch =
       cottageFilter === 'all' || x.cottage_id === cottageFilter;
 
     const categoryMatch =
       categoryFilter === 'all' || x.category === categoryFilter;
+const fromDateMatch =
+  !fromDate || x.expense_date >= fromDate;
 
-    return cottageMatch && categoryMatch;
+const toDateMatch =
+  !toDate || x.expense_date <= toDate;
+    return cottageMatch && categoryMatch && fromDateMatch && toDateMatch;
   });
-
+const filteredTotal = filteredRows.reduce(
+  (sum, x) => sum + Number(x.amount || 0),
+  0
+);
   return (
     <>
       <div className="actions">
@@ -670,6 +678,22 @@ function Expenses({ rows, admin, add, edit, remove }) {
     <option value="Essentials">Essentials</option>
     <option value="Other">Other</option>
   </select>
+      <input
+  type="date"
+  value={fromDate}
+  onChange={e => setFromDate(e.target.value)}
+  title="From Date"
+/>
+
+<input
+  type="date"
+  value={toDate}
+  onChange={e => setToDate(e.target.value)}
+  title="To Date"
+/>
+</div>
+    <div style={{ marginTop: '12px', marginBottom: '16px', fontWeight: 'bold' }}>
+  Total Spent: {money(filteredTotal)}
 </div>
       <div className="panel">
         <Table
