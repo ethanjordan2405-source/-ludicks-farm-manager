@@ -1,0 +1,421 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f5f2;
+  color: #1e2922;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  background: #183c2b;
+  color: white;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.brand small {
+  opacity: 0.75;
+}
+
+.user {
+  text-align: right;
+}
+
+.nav {
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 24px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.nav button {
+  border: 0;
+  background: transparent;
+  padding: 10px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.nav button.active {
+  background: #183c2b;
+  color: white;
+}
+
+main {
+  max-width: 1500px;
+  margin: auto;
+  padding: 24px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.stat,
+.panel {
+  background: white;
+  border: 1px solid #e1e1dc;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.04);
+}
+
+.stat {
+  padding: 20px;
+}
+
+.stat .label {
+  color: #68716b;
+  font-size: 13px;
+}
+
+.stat .value {
+  margin-top: 7px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.panel {
+  padding: 20px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.panel h2,
+.panel h3 {
+  margin-top: 0;
+}
+
+.btn {
+  border: 1px solid #cfd5d0;
+  background: white;
+  color: #183c2b;
+  border-radius: 7px;
+  padding: 7px 10px;
+  margin: 2px;
+}
+
+.btn.primary {
+  background: #183c2b;
+  color: white;
+  border-color: #183c2b;
+}
+
+.btn.danger {
+  color: #a22929;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+th,
+td {
+  text-align: left;
+  border-bottom: 1px solid #ecece8;
+  padding: 11px 9px;
+  vertical-align: top;
+}
+
+th {
+  color: #68716b;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.calendar-section {
+  margin: 25px 0;
+}
+
+.calendar-section > h2 {
+  margin-bottom: 6px;
+}
+
+.calendar-section > p {
+  color: #68716b;
+  margin-top: 0;
+}
+
+.calendar-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.calendar-card {
+  background: white;
+  border: 1px solid #deded8;
+  border-radius: 14px;
+  padding: 17px;
+  overflow: hidden;
+}
+
+.calendar-card.combined {
+  grid-column: 1 / -1;
+}
+
+.calendar-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.calendar-title h3 {
+  margin: 0;
+}
+
+.month-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.month-controls button {
+  border: 1px solid #d6d8d5;
+  background: white;
+  border-radius: 7px;
+  padding: 5px 9px;
+}
+
+.weekdays,
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.weekday {
+  text-align: center;
+  color: #6b736e;
+  font-size: 11px;
+  padding: 5px 0;
+}
+
+.day {
+  min-height: 82px;
+  border: 1px solid #e4e5e1;
+  border-radius: 8px;
+  padding: 6px;
+  background: #fafaf8;
+  overflow: hidden;
+}
+
+.day.blank {
+  border-color: transparent;
+  background: transparent;
+}
+
+.day.occupied {
+  background: #e5f1e8;
+  border-color: #83a98d;
+}
+
+.day-number {
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.booking-mini {
+  font-size: 10px;
+  line-height: 1.3;
+  background: #183c2b;
+  color: white;
+  padding: 4px;
+  border-radius: 5px;
+  margin-top: 3px;
+}
+
+.status {
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 7px;
+}
+
+.status.occupied {
+  color: #1f6a38;
+}
+
+.status.empty {
+  color: #777;
+}
+
+.booking-details {
+  margin-top: 12px;
+  background: #f7f8f5;
+  border-radius: 9px;
+  padding: 11px;
+  font-size: 13px;
+}
+
+.booking-details strong {
+  color: #183c2b;
+}
+
+.notice {
+  padding: 12px 15px;
+  background: #fff4ce;
+  border: 1px solid #ead48c;
+  border-radius: 9px;
+  margin-bottom: 18px;
+}
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #183c2b;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.login-card h1 {
+  margin-bottom: 4px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 11px;
+  margin: 7px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.login-card button {
+  width: 100%;
+  padding: 11px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: #183c2b;
+  color: white;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  padding: 9px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+}
+
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.42);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  width: min(650px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+@media (max-width: 900px) {
+  .cards,
+  .calendar-grid-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-card.combined {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 14px;
+  }
+
+  .topbar {
+    padding: 15px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .day {
+    min-height: 65px;
+    padding: 4px;
+  }
+
+  .booking-mini {
+    font-size: 8px;
+  }
+}
