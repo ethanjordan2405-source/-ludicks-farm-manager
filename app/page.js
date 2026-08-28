@@ -293,11 +293,10 @@ export default function App() {
 
         {page === 'Financial Summary' && (
           <FinancialSummary
-            cottageIncome={cottageIncome}
-            cottageExpenses={cottageExpenses}
-            restaurantIncome={restaurantIncome}
-            restaurantExpenses={restaurantExpenses}
-          />
+  bookings={data.bookings}
+  restaurant={data.restaurant}
+  expenses={data.expenses}
+/>
         )}
       </main>
 
@@ -715,54 +714,217 @@ function Occupancy({ bookings }) {
   );
 }
 
-function FinancialSummary({
-  cottageIncome,
-  cottageExpenses,
-  restaurantIncome,
-  restaurantExpenses,
-}) {
-  const combinedIncome = cottageIncome + restaurantIncome;
-  const combinedExpenses = cottageExpenses + restaurantExpenses;
+function FinancialSummary({ bookings, restaurant, expenses }) {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [reportFor, setReportFor] = useState('all');
+
+  const inRange = date => {
+    if (!date) return false;
+    if (startDate && date < startDate) return false;
+    if (endDate && date > endDate) return false;
+    return true;
+  };
+
+  const selectedCottageIds =
+    reportFor === 'all' || reportFor === 'combined'
+      ? cottages.map(c => c[0])
+      : cottages.some(c => c[0] === reportFor)
+        ? [reportFor]
+        : [];
+
+  const cottageIncome = bookings
+    .filter(
+      b =>
+        selectedCottageIds.includes(b.cottage_id) &&
+        inRange(b.check_in)
+    )
+    .reduce((sum, b) => sum + Number(b.total_price || 0), 0);
+
+  const cottageExpenses = expenses
+    .filter(
+      e =>
+        selectedCottageIds.includes(e.cottage_id) &&
+        inRange(e.expense_date)
+    )
+    .reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
+  const restaurantIncome =
+    reportFor === 'restaurant' || reportFor === 'combined'
+      ? restaurant
+          .filter(
+            x =>
+              x.entry_type === 'income' &&
+              inRange(x.entry_date)
+          )
+          .reduce((sum, x) => sum + Number(x.amount || 0), 0)
+      : 0;
+
+  const restaurantExpenses =
+    reportFor === 'restaurant' || reportFor === 'combined'
+      ? restaurant
+          .filter(
+            x =>
+              x.entry_type === 'expense' &&
+              inRange(x.entry_date)
+          )
+          .reduce((sum, x) => sum + Number(x.amount || 0), 0)
+      : 0;
+
+  const showCottages =
+    reportFor === 'all' ||
+    reportFor === 'combined' ||
+    cottages.some(c => c[0] === reportFor);
+
+  const showRestaurant =
+    reportFor === 'restaurant' || reportFor === 'combined';
+
+  const totalIncome =
+    (showCottages ? cottageIncome : 0) +
+    (showRestaurant ? restaurantIncome : 0);
+
+  const totalExpenses =
+    (showCottages ? cottageExpenses : 0) +
+    (showRestaurant ? restaurantExpenses : 0);
+
+  const reportName =
+    reportFor === 'all'
+      ? 'All Cottages Combined'
+      : reportFor === 'restaurant'
+        ? 'Restaurant'
+        : reportFor === 'combined'
+          ? 'Cottages + Restaurant'
+          : cottages.find(c => c[0] === reportFor)?.[1] || '';
 
   return (
     <>
       <h2>Financial Summary</h2>
 
       <div className="panel">
-        <h3>Cottages</h3>
+        <h3>Report Selection</h3>
+
+        <div className="form-grid">
+          <label>
+            Start Date
+            <input
+              type="date"
+              value={startDate}
+              max={endDate || undefined}
+              onChange={e => setStartDate(e.target.value)}
+            />
+          </label>
+
+          <label>
+            End Date
+            <input
+              type="date"
+              value={endDate}
+              min={startDate || undefined}
+              onChange={e => setEndDate(e.target.value)}
+            />
+          </label>
+
+          <label>
+            Financial Summary For
+            <select
+              value={reportFor}
+              onChange={e => setReportFor(e.target.value)}
+            >
+              <option value="standard">Standard Cottage</option>
+              <option value="luxury">Luxury Cottage</option>
+              <option value="superior">Superior Cottage</option>
+              <option value="premier">Premier Cottage</option>
+              <option value="all">All Cottages Combined</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="combined">
+                Cottages + Restaurant Combined
+              </option>
+            </select>
+          </label>
+        </div>
+
+        {(startDate || endDate) && (
+          <button
+            className="btn"
+            type="button"
+            onClick={() => {
+              setStartDate('');
+              setEndDate('');
+            }}
+          >
+            Clear Dates
+          </button>
+        )}
+      </div>
+
+      <div className="panel">
+        <h3>{reportName}</h3>
+
         <div className="cards">
-          <Stat t="Income" v={money(cottageIncome)} />
-          <Stat t="Expenses" v={money(cottageExpenses)} />
+          <Stat
+            t="Income"
+            v={money(totalIncome)}
+          />
+
+          <Stat
+            t="Expenses"
+            v={money(totalExpenses)}
+          />
+
           <Stat
             t="Profit / Loss"
-            v={money(cottageIncome - cottageExpenses)}
+            v={money(totalIncome - totalExpenses)}
           />
         </div>
       </div>
 
-      <div className="panel">
-        <h3>Restaurant</h3>
-        <div className="cards">
-          <Stat t="Income" v={money(restaurantIncome)} />
-          <Stat t="Expenses" v={money(restaurantExpenses)} />
-          <Stat
-            t="Profit / Loss"
-            v={money(restaurantIncome - restaurantExpenses)}
-          />
-        </div>
-      </div>
+      {reportFor === 'combined' && (
+        <>
+          <div className="panel">
+            <h3>All Cottages</h3>
 
-      <div className="panel">
-        <h3>Combined</h3>
-        <div className="cards">
-          <Stat t="Total Income" v={money(combinedIncome)} />
-          <Stat t="Total Expenses" v={money(combinedExpenses)} />
-          <Stat
-            t="Profit / Loss"
-            v={money(combinedIncome - combinedExpenses)}
-          />
-        </div>
-      </div>
+            <div className="cards">
+              <Stat
+                t="Income"
+                v={money(cottageIncome)}
+              />
+
+              <Stat
+                t="Expenses"
+                v={money(cottageExpenses)}
+              />
+
+              <Stat
+                t="Profit / Loss"
+                v={money(cottageIncome - cottageExpenses)}
+              />
+            </div>
+          </div>
+
+          <div className="panel">
+            <h3>Restaurant</h3>
+
+            <div className="cards">
+              <Stat
+                t="Income"
+                v={money(restaurantIncome)}
+              />
+
+              <Stat
+                t="Expenses"
+                v={money(restaurantExpenses)}
+              />
+
+              <Stat
+                t="Profit / Loss"
+                v={money(
+                  restaurantIncome - restaurantExpenses
+                )}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
