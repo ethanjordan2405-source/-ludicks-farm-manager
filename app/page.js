@@ -15,7 +15,20 @@ const cottages = [
   ['premier', 'Premier Cottage', 4],
 ];
 
-const cats = ['Maintenance', 'Wages', 'Cleaning', 'Essentials', 'Other'];
+const cats = [
+  'Cleaning',
+  'Laundry',
+  'Barbecue / Wood',
+  'Pool Maintenance',
+  'General Maintenance',
+  'Guest Food',
+  'Guesthouse Beverages',
+  'Replacements',
+  'Linen',
+  'Wages',
+  'Essentials',
+  'Other',
+];
 
 const money = n =>
   'R ' +
@@ -676,11 +689,11 @@ const filteredTotal = filteredRows.reduce(
     onChange={e => setCategoryFilter(e.target.value)}
   >
     <option value="all">All Categories</option>
-    <option value="Maintenance">Maintenance</option>
-    <option value="Wages">Wages</option>
-    <option value="Cleaning">Cleaning</option>
-    <option value="Essentials">Essentials</option>
-    <option value="Other">Other</option>
+    {cats.map(c => (
+  <option key={c} value={c}>
+    {c}
+  </option>
+))}
   </select>
       <input
   type="date"
