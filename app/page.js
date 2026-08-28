@@ -817,12 +817,15 @@ function FinancialSummary({ bookings, restaurant, expenses }) {
     .reduce((sum, b) => sum + Number(b.total_price || 0), 0);
 
   const cottageExpenses = expenses
-    .filter(
-      e =>
-        selectedCottageIds.includes(e.cottage_id) &&
-        inRange(e.expense_date)
-    )
-    .reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  .filter(
+    e =>
+      (
+        selectedCottageIds.includes(e.cottage_id) ||
+        (reportFor === 'all' && e.cottage_id === 'combined')
+      ) &&
+      inRange(e.expense_date)
+  )
+  .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
   const restaurantIncome =
     reportFor === 'restaurant' || reportFor === 'combined'
