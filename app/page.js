@@ -623,6 +623,19 @@ function Restaurant({ rows, admin, add, edit, remove }) {
 }
 
 function Expenses({ rows, admin, add, edit, remove }) {
+  const [cottageFilter, setCottageFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+
+  const filteredRows = rows.filter(x => {
+    const cottageMatch =
+      cottageFilter === 'all' || x.cottage_id === cottageFilter;
+
+    const categoryMatch =
+      categoryFilter === 'all' || x.category === categoryFilter;
+
+    return cottageMatch && categoryMatch;
+  });
+
   return (
     <>
       <div className="actions">
@@ -633,11 +646,35 @@ function Expenses({ rows, admin, add, edit, remove }) {
           </button>
         )}
       </div>
+<div className="filters">
+  <select
+    value={cottageFilter}
+    onChange={e => setCottageFilter(e.target.value)}
+  >
+    <option value="all">All Cottages</option>
+    <option value="standard">Standard Cottage</option>
+    <option value="luxury">Luxury Cottage</option>
+    <option value="superior">Superior Cottage</option>
+    <option value="premier">Premier Cottage</option>
+    <option value="general">General</option>
+  </select>
 
+  <select
+    value={categoryFilter}
+    onChange={e => setCategoryFilter(e.target.value)}
+  >
+    <option value="all">All Categories</option>
+    <option value="Maintenance">Maintenance</option>
+    <option value="Wages">Wages</option>
+    <option value="Cleaning">Cleaning</option>
+    <option value="Essentials">Essentials</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
       <div className="panel">
         <Table
           head={['Date', 'Category', 'Cottage', 'Description', 'Amount', '']}
-          rows={rows.map(x => [
+          rows={filteredRows.map(x => [
             x.expense_date,
             x.category,
             cottages.find(c => c[0] === x.cottage_id)?.[1] || 'General',
