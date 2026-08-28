@@ -134,7 +134,7 @@ export default function App() {
       <header className="topbar">
         <div className="brand">
   <img
-    src="/5F9DADFA-A488-49E1-A5DC-D793055202F1.png"
+    src="/1CDC0848-6165-449F-A4CA-948875692274.png"
     alt="Ludicks Farm"
     style={{ width: '220px', height: 'auto', display: 'block' }}
   />
