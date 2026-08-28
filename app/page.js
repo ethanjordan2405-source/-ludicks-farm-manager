@@ -133,9 +133,13 @@ export default function App() {
     <div className="shell">
       <header className="topbar">
         <div className="brand">
-          <h1>LUDICKS FARM</h1>
-          <small>Management System</small>
-        </div>
+  <img
+    src="/5F9DADFA-A488-49E1-A5DC-D793055202F1.png"
+    alt="Ludicks Farm"
+    style={{ width: '220px', height: 'auto', display: 'block' }}
+  />
+  <small>Management System</small>
+</div>
 
         <div className="user">
           <strong>{displayName || (admin ? 'Admin' : 'Local')}</strong>
