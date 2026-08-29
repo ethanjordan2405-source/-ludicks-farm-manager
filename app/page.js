@@ -44,6 +44,7 @@ export default function App() {
   const [role, setRole] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [page, setPage] = useState('Dashboard');
+  const [bookingFilter, setBookingFilter] = useState('all');
   const [calMonth, setCalMonth] = useState(currentMonth());
   const [modal, setModal] = useState(null);
   const [err, setErr] = useState('');
@@ -280,9 +281,37 @@ export default function App() {
                 </button>
               )}
             </div>
-
+<div className="filters">
+  <select
+    value={bookingFilter}
+    onChange={e => setBookingFilter(e.target.value)}
+  >
+    <option value="all">All Bookings</option>
+    <option value="past">Past Bookings</option>
+    <option value="present">Present Bookings</option>
+    <option value="future">Future Bookings</option>
+  </select>
+</div>
             <BookingTable
-              rows={[...data.bookings].sort((a, b) => new Date(b.check_in) - new Date(a.check_in))}
+              rows={[...data.bookings]
+  .filter(b => {
+    const today = new Date().toISOString().slice(0, 10);
+
+    if (bookingFilter === 'past') {
+      return b.check_out <= today;
+    }
+
+    if (bookingFilter === 'present') {
+      return b.check_in <= today && b.check_out > today;
+    }
+
+    if (bookingFilter === 'future') {
+      return b.check_in > today;
+    }
+
+    return true;
+  })
+  .sort((a, b) => new Date(b.check_in) - new Date(a.check_in))}
               paid={paid}
               admin={admin}
               edit={x => setModal({ type: 'booking', x })}
