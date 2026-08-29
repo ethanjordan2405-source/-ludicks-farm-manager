@@ -1194,7 +1194,8 @@ function BookingForm({ item, close, reload, setErr }) {
             value={form.total_price}
             set={v => setForm({ ...form, total_price: v })}
             required
-          />
+moneyField
+/>
 
           <Field
             label="Notes"
@@ -1240,12 +1241,13 @@ function PaymentForm({ booking, close, reload, setErr }) {
       <form onSubmit={save}>
         <div className="form-grid">
           <Field
-            label="Amount"
-            type="number"
-            value={amount}
-            set={setAmount}
-            required
-          />
+  label="Amount"
+  type="number"
+  value={amount}
+  set={setAmount}
+  required
+  moneyField
+/>
 
           <Field
             label="Payment date"
@@ -1343,6 +1345,7 @@ function RestaurantForm({ item, close, reload, setErr }) {
             value={form.amount}
             set={v => setForm({ ...form, amount: v })}
             required
+              moneyField
           />
         </div>
 
@@ -1356,7 +1359,7 @@ function ExpenseForm({ item, close, reload, setErr }) {
   const [form, setForm] = useState({
     expense_date:
       item?.expense_date || new Date().toISOString().slice(0, 10),
-    category: item?.category || 'Maintenance',
+    category: item?.category || 'Cleaning',
     cottage_id: item?.cottage_id || '',
     description: item?.description || '',
     amount: item?.amount || '',
@@ -1448,7 +1451,8 @@ function ExpenseForm({ item, close, reload, setErr }) {
             value={form.amount}
             set={v => setForm({ ...form, amount: v })}
             required
-          />
+moneyField
+/>
         </div>
 
         <SaveButtons close={close} />
@@ -1473,7 +1477,14 @@ function FormShell({ title, close, children }) {
   );
 }
 
-function Field({ label, value, set, type = 'text', required = false }) {
+function Field({
+  label,
+  value,
+  set,
+  type = 'text',
+  required = false,
+  moneyField = false,
+}) {
   return (
     <label>
       {label}
@@ -1483,6 +1494,15 @@ function Field({ label, value, set, type = 'text', required = false }) {
         required={required}
         step={type === 'number' ? '0.01' : undefined}
         onChange={e => set(e.target.value)}
+        onBlur={e => {
+          if (moneyField && e.target.value !== '') {
+            const number = Number(e.target.value);
+
+            if (!Number.isNaN(number)) {
+              set(number.toFixed(2));
+            }
+          }
+        }}
       />
     </label>
   );
