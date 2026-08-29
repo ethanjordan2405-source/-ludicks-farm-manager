@@ -1339,7 +1339,7 @@ function PaymentForm({ booking, payments, close, reload, setErr }) {
   const [method, setMethod] = useState('Cash');
 const [editingPayment, setEditingPayment] = useState(null);
 
-const bookingPayments = payments.filter(
+const bookingPayments = (payments || []).filter(
   p => p.booking_id === booking.id
 );
   async function save(e) {
