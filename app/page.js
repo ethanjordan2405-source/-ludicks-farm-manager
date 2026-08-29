@@ -350,8 +350,21 @@ function Stat({ t, v }) {
 function BookingTable({ rows, paid, admin, edit, remove, payment }) {
   return (
     <div className="panel">
-      <Table
-        head={[
+  <Table
+  rowStyles={rows.map(b => {
+    const today = new Date().toISOString().slice(0, 10);
+
+    if (b.check_out <= today) {
+      return { backgroundColor: '#ffd6d6' };
+    }
+
+    if (b.check_in > today) {
+      return { backgroundColor: '#d9f5df' };
+    }
+
+    return {};
+  })}
+  head={[
           'Guest',
           'Phone',
           'Cottage',
@@ -1101,7 +1114,7 @@ const outstandingBookings = bookings
   );
 }
 
-function Table({ head, rows }) {
+function Table({ head, rows, rowStyles = [] }) {
   return (
     <table>
       <thead>
@@ -1115,7 +1128,7 @@ function Table({ head, rows }) {
       <tbody>
         {rows.length ? (
           rows.map((r, i) => (
-            <tr key={i}>
+            <tr key={i} style={rowStyles[i] || {}}>
               {r.map((x, j) => (
                 <td key={j}>{x}</td>
               ))}
