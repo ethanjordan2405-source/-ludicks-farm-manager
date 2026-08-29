@@ -740,48 +740,94 @@ const filteredTotal = filteredRows.reduce(
 }
 
 function Occupancy({ bookings }) {
-  const now = new Date();
-  const year = now.getFullYear();
-  const mo = now.getMonth() + 1;
-  const days = new Date(year, mo, 0).getDate();
+  const thisMonth = new Date().toISOString().slice(0, 7);
+
+  const [startMonth, setStartMonth] = useState(thisMonth);
+  const [endMonth, setEndMonth] = useState(thisMonth);
+
+  const startDate = `${startMonth}-01`;
+
+  const [endYear, endMo] = endMonth.split('-').map(Number);
+  const lastDay = new Date(endYear, endMo, 0).getDate();
+  const endDate = `${endMonth}-${String(lastDay).padStart(2, '0')}`;
+
+  const start = new Date(startDate + 'T00:00:00');
+  const end = new Date(endDate + 'T00:00:00');
+
+  const totalDays =
+    Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
   let totalOccupied = 0;
 
   const stats = cottages.map(c => {
-    let n = 0;
+    let occupiedNights = 0;
 
-    for (let d = 1; d <= days; d++) {
-      const ds = `${year}-${String(mo).padStart(2, '0')}-${String(d).padStart(
-        2,
-        '0'
-      )}`;
+    if (totalDays > 0) {
+      for (let d = 0; d < totalDays; d++) {
+        const current = new Date(start);
+        current.setDate(start.getDate() + d);
 
-      if (
-        bookings.some(
-          b =>
-            b.cottage_id === c[0] &&
-            b.check_in <= ds &&
-            b.check_out > ds
-        )
-      ) {
-        n++;
+        const ds = `${current.getFullYear()}-${String(
+          current.getMonth() + 1
+        ).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
+
+        if (
+          bookings.some(
+            b =>
+              b.cottage_id === c[0] &&
+              b.check_in <= ds &&
+              b.check_out > ds
+          )
+        ) {
+          occupiedNights++;
+        }
       }
     }
 
-    totalOccupied += n;
+    totalOccupied += occupiedNights;
 
     return {
       name: c[1],
-      nights: n,
-      percent: (n / days) * 100,
+      nights: occupiedNights,
+      percent:
+        totalDays > 0 ? (occupiedNights / totalDays) * 100 : 0,
     };
   });
 
-  const combined = (totalOccupied / (days * cottages.length)) * 100;
+  const combined =
+    totalDays > 0
+      ? (totalOccupied / (totalDays * cottages.length)) * 100
+      : 0;
 
   return (
     <>
       <h2>Occupancy</h2>
+
+      <div className="panel">
+        <h3>Select Period</h3>
+
+        <div className="form-grid">
+          <label>
+            Start Month
+            <input
+              type="month"
+              value={startMonth}
+              max={endMonth}
+              onChange={e => setStartMonth(e.target.value)}
+            />
+          </label>
+
+          <label>
+            End Month
+            <input
+              type="month"
+              value={endMonth}
+              min={startMonth}
+              onChange={e => setEndMonth(e.target.value)}
+            />
+          </label>
+        </div>
+      </div>
 
       <div className="cards">
         {stats.map(x => (
@@ -795,8 +841,11 @@ function Occupancy({ bookings }) {
 
       <div className="panel">
         <h3>Combined Occupancy</h3>
+
         <div className="stat">
-          <div className="value">{combined.toFixed(1)}%</div>
+          <div className="value">
+            {combined.toFixed(1)}%
+          </div>
         </div>
       </div>
     </>
