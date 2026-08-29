@@ -356,6 +356,7 @@ payments={data.payments}
       {modal && (
         <Modal
           modal={modal}
+       payments={data.payments}
           close={() => setModal(null)}
           reload={load}
           setErr={setErr}
@@ -1173,7 +1174,7 @@ function Table({ head, rows, rowStyles = [] }) {
   );
 }
 
-function Modal({ modal, close, reload, setErr }) {
+function Modal({ modal, close, reload, setErr, payments }) {
   if (modal.type === 'booking') {
     return (
       <BookingForm
@@ -1189,7 +1190,7 @@ function Modal({ modal, close, reload, setErr }) {
     return (
       <PaymentForm
         booking={modal.x}
-payments={data.payments}
+payments={payments}
         close={close}
         reload={reload}
         setErr={setErr}
