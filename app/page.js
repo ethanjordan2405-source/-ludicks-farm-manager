@@ -1189,6 +1189,7 @@ function Modal({ modal, close, reload, setErr }) {
     return (
       <PaymentForm
         booking={modal.x}
+payments={data.payments}
         close={close}
         reload={reload}
         setErr={setErr}
@@ -1330,22 +1331,43 @@ moneyField
   );
 }
 
-function PaymentForm({ booking, close, reload, setErr }) {
+function PaymentForm({ booking, payments, close, reload, setErr }) {
   const [amount, setAmount] = useState('');
   const [paidOn, setPaidOn] = useState(
     new Date().toISOString().slice(0, 10)
   );
   const [method, setMethod] = useState('Cash');
+const [editingPayment, setEditingPayment] = useState(null);
 
+const bookingPayments = payments.filter(
+  p => p.booking_id === booking.id
+);
   async function save(e) {
     e.preventDefault();
 
-    const { error } = await supabase.from('payments').insert({
-      booking_id: booking.id,
-      amount,
-      paid_on: paidOn,
-      method,
-    });
+    let error;
+
+const paymentData = {
+  booking_id: booking.id,
+  amount,
+  paid_on: paidOn,
+  method,
+};
+
+if (editingPayment) {
+  const result = await supabase
+    .from('payments')
+    .update(paymentData)
+    .eq('id', editingPayment.id);
+
+  error = result.error;
+} else {
+  const result = await supabase
+    .from('payments')
+    .insert(paymentData);
+
+  error = result.error;
+}
 
     if (error) {
       setErr(error.message);
@@ -1387,7 +1409,32 @@ function PaymentForm({ booking, close, reload, setErr }) {
             </select>
           </label>
         </div>
+{bookingPayments.length > 0 && (
+  <div className="panel">
+    <h3>Payments Already Recorded</h3>
 
+    {bookingPayments.map(p => (
+      <div key={p.id} className="actions">
+        <span>
+          {money(p.amount)} — {p.paid_on} — {p.method}
+        </span>
+
+        <button
+          type="button"
+          className="btn"
+          onClick={() => {
+            setEditingPayment(p);
+            setAmount(p.amount);
+            setPaidOn(p.paid_on);
+            setMethod(p.method || 'Cash');
+          }}
+        >
+          Edit
+        </button>
+      </div>
+    ))}
+  </div>
+)}
         <SaveButtons close={close} />
       </form>
     </FormShell>
