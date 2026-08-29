@@ -317,6 +317,7 @@ export default function App() {
         {page === 'Financial Summary' && (
           <FinancialSummary
   bookings={data.bookings}
+payments={data.payments}
   restaurant={data.restaurant}
   expenses={data.expenses}
 />
@@ -802,11 +803,26 @@ function Occupancy({ bookings }) {
   );
 }
 
-function FinancialSummary({ bookings, restaurant, expenses }) {
+function FinancialSummary({ bookings, payments, restaurant, expenses }) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reportFor, setReportFor] = useState('all');
+const outstandingBookings = bookings
+  .map(b => {
+    const amountPaid = payments
+      .filter(p => p.booking_id === b.id)
+      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
+    return {
+      ...b,
+      outstanding: Math.max(
+        0,
+        Number(b.total_price || 0) - amountPaid
+      ),
+    };
+  })
+  .filter(b => b.outstanding > 0)
+  .sort((a, b) => new Date(a.check_in) - new Date(b.check_in));
   const inRange = date => {
     if (!date) return false;
     if (startDate && date < startDate) return false;
@@ -1019,6 +1035,19 @@ function FinancialSummary({ bookings, restaurant, expenses }) {
           </div>
         </>
       )}
+  <div className="panel">
+  <h3>Outstanding Payments</h3>
+
+  <Table
+    head={['Guest', 'Amount Outstanding', 'Check-in', 'Check-out']}
+    rows={outstandingBookings.map(b => [
+      b.guest_name,
+      money(b.outstanding),
+      b.check_in,
+      b.check_out,
+    ])}
+  />
+</div>
     </>
   );
 }
