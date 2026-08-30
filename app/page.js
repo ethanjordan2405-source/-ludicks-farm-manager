@@ -309,7 +309,7 @@ export default function App() {
       return b.check_in > today;
     }
 
-    return true;
+    return b.check_out > today;
   })
   .sort((a, b) => a.check_in.localeCompare(b.check_in))
               paid={paid}
