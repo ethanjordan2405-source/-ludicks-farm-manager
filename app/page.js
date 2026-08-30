@@ -311,7 +311,21 @@ export default function App() {
 
     return true;
   })
-  .sort((a, b) => new Date(a.check_in) - new Date(b.check_in))
+  .sort((a, b) => {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const aPast = a.check_out <= today;
+  const bPast = b.check_out <= today;
+
+  if (aPast && !bPast) return 1;
+  if (!aPast && bPast) return -1;
+
+  if (aPast && bPast) {
+    return new Date(b.check_in) - new Date(a.check_in);
+  }
+
+  return new Date(a.check_in) - new Date(b.check_in);
+})
               paid={paid}
               admin={admin}
               edit={x => setModal({ type: 'booking', x })}
