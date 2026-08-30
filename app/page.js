@@ -311,7 +311,7 @@ export default function App() {
 
     return true;
   })
-  .sort((a, b) => new Date(b.check_in) - new Date(a.check_in))}
+  .sort((a, b) => new Date(a.check_in) - new Date(b.check_in))
               paid={paid}
               admin={admin}
               edit={x => setModal({ type: 'booking', x })}
