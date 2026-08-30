@@ -1160,7 +1160,9 @@ function Table({ head, rows, rowStyles = [] }) {
           rows.map((r, i) => (
             <tr key={i} style={rowStyles[i] || {}}>
               {r.map((x, j) => (
-                <td key={j}>{x}</td>
+                <td key={j} data-label={head[j]}>
+  {x}
+</td>
               ))}
             </tr>
           ))
