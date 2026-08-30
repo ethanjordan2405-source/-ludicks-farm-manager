@@ -311,7 +311,7 @@ export default function App() {
 
     return b.check_out > today;
   })
-  .sort((a, b) => a.check_in.localeCompare(b.check_in))
+  .sort((a, b) => a.check_in.localeCompare(b.check_in))}
               paid={paid}
               admin={admin}
               edit={x => setModal({ type: 'booking', x })}
